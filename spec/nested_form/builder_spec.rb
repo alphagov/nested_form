@@ -97,6 +97,19 @@ require "spec_helper"
 
           fields.should == '<div class="fields foo">Task</div><div class="fields foo">Task</div>'
         end
+
+        it "accepts a block as a wrapper class to which it passes the form object" do
+          project.tasks.build(:name => 'foo')
+          project.tasks.build(:name => 'bar')
+
+          fields = if subject.is_a?(NestedForm::SimpleBuilder)
+            subject.simple_fields_for(:tasks, :wrapper_class => lambda {|t| t.name }) { "Task" }
+          else
+            subject.fields_for(:tasks, :wrapper_class => lambda {|t| t.name }) { "Task" }
+          end
+
+          fields.should == '<div class="fields foo">Task</div><div class="fields bar">Task</div>'
+        end
       end
 
       it "wraps nested fields marked for destruction with an additional class" do
