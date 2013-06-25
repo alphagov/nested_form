@@ -85,6 +85,18 @@ require "spec_helper"
 
           fields.should == '<div class="fields">Task</div><div class="fields">Task</div>'
         end
+
+        it "wraps nested fields each in a div with additional classes" do
+          2.times { project.tasks.build }
+
+          fields = if subject.is_a?(NestedForm::SimpleBuilder)
+            subject.simple_fields_for(:tasks, :wrapper_class => "foo") { "Task" }
+          else
+            subject.fields_for(:tasks, :wrapper_class => "foo") { "Task" }
+          end
+
+          fields.should == '<div class="fields foo">Task</div><div class="fields foo">Task</div>'
+        end
       end
 
       it "wraps nested fields marked for destruction with an additional class" do
